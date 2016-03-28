@@ -32,32 +32,16 @@ var PicUrls = [
     "images/11.png"
 ];
 
-
-//var PicUrls = [
-//    "img/0.jpg",
-//    "img/1.jpg",
-//    "img/2.jpg",
-//    "img/3.jpg",
-//    "img/4.jpg",
-//    "img/5.jpg",
-//    "img/6.jpg",
-//    "img/7.jpg",
-//    "img/8.jpg",
-//    "img/9.jpg",
-//    "img/10.jpg",
-//    "img/11.jpg"
-//];
-
 window.onload = function() {
     var picIdx = 0;
     var manager = new Manager();
-    manager.init();
+    manager.init("id_daddy");
     var trigger = setInterval(function() {
         try {
-            manager.picAry[picIdx].show();
+            manager.showItem(picIdx);
             console.log("pic index -- : " + picIdx);
             picIdx++;
-            if (picIdx >= manager.picAry.length) {
+            if (picIdx >= manager.getItemCount()) {
                 clearInterval(trigger);
             }
         }catch(err){
@@ -68,12 +52,35 @@ window.onload = function() {
 
 function Manager () {
     this.picAry = [];
-    this.init = function(){
-        var randomIDs = this.shuffle(PicIds);
+    this.containerWidth = 0;
+    this.containerHeight = 0;
+
+    this.init = function(containerId){
+        //var randomIDs = this.shuffle(PicIds);
         var randomUrls =  this.shuffle(PicUrls);
 
-        for(var i=0; i<randomIDs.length ; i++){
-            this.picAry.push( new Picture(randomIDs[i], randomUrls[i]) )
+        var containerDiv = document.getElementById(containerId);
+        this.containerWidth = containerDiv.offsetWidth;
+        this.containerHeight = containerDiv.offsetHeight;
+
+        var picDiv = document.getElementById(PicIds[0]);
+        this.picAry.push( new Picture(PicIds[0], randomUrls[0] ));
+
+        for(var i=1; i<PicIds.length ; i++){
+            var clone = picDiv.cloneNode(true); // "deep" clone
+            clone.id = PicIds[i];
+            picDiv.parentNode.appendChild(clone);
+            this.picAry.push( new Picture(PicIds[i], randomUrls[i] ));
+        }
+    }
+
+    this.getItemCount = function(){
+        return this.picAry.length;
+    }
+
+    this.showItem = function(idx){
+        if(idx < this.picAry.length) {
+            this.picAry[idx].show(this.getRandomX(), this.getRandomY());
         }
     }
 
@@ -95,9 +102,26 @@ function Manager () {
 
         return array;
     }
+
+    this.getRandomX = function() {
+        var min = 0;
+        var max = this.containerWidth > 0 ? Math.floor(this.containerWidth*0.75) : 0;
+        console.log(max);
+        console.log(Math.floor(Math.random() * (max - min + 1)) + min);
+        console.log("----");
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    this.getRandomY = function() {
+        var min = 0;
+        var max = this.containerHeight > 0 ? Math.floor(this.containerHeight*0.75) : 0;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
 }
 
-function Picture (id, imgURL){
+function Picture (id, imgURL  ){
     this.div_id = id;
     this.imgURL = imgURL;
     var picDiv = document.getElementById(this.div_id);
@@ -105,8 +129,13 @@ function Picture (id, imgURL){
     picBlock.src = this.imgURL;
 }
 
-Picture.prototype.show = function(){
+Picture.prototype.show = function(posX, posY){
     var picDiv = document.getElementById(this.div_id);
     picDiv.style.visibility = 'visible';
-    //picDiv.style.backgroundColor = '#' + Math.random().toString(16).substring(2, 8);
+    picDiv.style.position = 'absolute';
+    picDiv.style.left = posX + "px";
+    picDiv.style.top = posY + "px";
+    picDiv.style.backgroundColor = '#' + Math.random().toString(16).substring(2, 8);
 }
+
+
