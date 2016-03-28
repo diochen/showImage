@@ -136,7 +136,7 @@ Picture.prototype.show = function(posX, posY){
     picDiv.style.position = 'absolute';
     picDiv.style.left = posX + "px";
     picDiv.style.top = posY + "px";
-    picDiv.style.backgroundColor = '#' + Math.random().toString(16).substring(2, 8);
+    //picDiv.style.backgroundColor = '#' + Math.random().toString(16).substring(2, 8);
     this.isHidden = false;
 }
 
