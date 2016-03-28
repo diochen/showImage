@@ -2,21 +2,6 @@
  * Created by i_jhuhuchen on 2016/3/28.
  */
 
-var PicIds = [
-    "id_pic0",
-    "id_pic1",
-    "id_pic2",
-    "id_pic3",
-    "id_pic4",
-    "id_pic5",
-    "id_pic6",
-    "id_pic7",
-    "id_pic8",
-    "id_pic9",
-    "id_pic10",
-    "id_pic11"
-];
-
 var PicUrls = [
     "images/0.png",
     "images/1.png",
@@ -35,14 +20,10 @@ var PicUrls = [
 var manager = new Manager();
 
 window.onload = function() {
-    var picIdx = 0;
-    manager.init("id_daddy");
+    manager.init("id_daddy", PicUrls);
     var trigger = setInterval(function() {
         try {
-            manager.showItem(picIdx);
-            console.log("pic index -- : " + picIdx);
-            picIdx++;
-            if (picIdx >= manager.getItemCount()) {
+            if(!manager.showNextItem()){
                 clearInterval(trigger);
             }
         }catch(err){
@@ -62,34 +43,37 @@ function Manager () {
     this.containerWidth = 0;
     this.containerHeight = 0;
     this.containerId = "";
+    this.itemShowIdx = 0;
 
-    this.init = function(containerId){
+    this.init = function(containerId, imgUrls){
         this.containerId = containerId;
-        //var randomIDs = this.shuffle(PicIds);
-        var randomUrls =  this.shuffle(PicUrls);
+        this.itemShowIdx = 0;
+
+        var randomUrls =  this.shuffle(imgUrls);
 
         var containerDiv = document.getElementById(containerId);
         this.containerWidth = containerDiv.offsetWidth;
         this.containerHeight = containerDiv.offsetHeight;
 
-        var picDiv = document.getElementById(PicIds[0]);
-        this.picAry.push( new Picture(PicIds[0], randomUrls[0] ));
+        var picDiv = document.getElementById("id_pic0");
+        this.picAry.push( new Picture("id_pic0", randomUrls[0] ));
 
-        for(var i=1; i<PicIds.length ; i++){
+        for(var i=1; i<imgUrls.length ; i++){
             var clone = picDiv.cloneNode(true); // "deep" clone
-            clone.id = PicIds[i];
+            clone.id = "id_pic" + i;
             picDiv.parentNode.appendChild(clone);
-            this.picAry.push( new Picture(PicIds[i], randomUrls[i] ));
+            this.picAry.push( new Picture(clone.id, randomUrls[i] ));
         }
     }
 
-    this.getItemCount = function(){
-        return this.picAry.length;
-    }
-
-    this.showItem = function(idx){
-        if(idx < this.picAry.length) {
-            this.picAry[idx].show(this.getRandomX(), this.getRandomY());
+    this.showNextItem = function(){
+        if(this.itemShowIdx < this.picAry.length) {
+            console.log("pic index -- : " + this.itemShowIdx);
+            this.picAry[this.itemShowIdx].show(this.getRandomX(), this.getRandomY());
+            this.itemShowIdx++;
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -131,8 +115,6 @@ function Manager () {
         var max = this.containerHeight > 0 ? Math.floor(this.containerHeight*0.75) : 0;
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-
-
 }
 
 function Picture (id, imgURL  ){
