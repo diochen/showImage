@@ -31,7 +31,7 @@ window.onload = function() {
         }catch(err){
             clearInterval(trigger);
         }
-    }, 1000);
+    }, 10000);
 };
 
 var viewResize = function(){
