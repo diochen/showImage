@@ -40,6 +40,7 @@ window.addEventListener("resize", viewResize);
 
 function Manager () {
     this.picAry = [];
+    this.picDragable = [];
     this.containerWidth = 0;
     this.containerHeight = 0;
     this.containerId = "";
@@ -57,12 +58,14 @@ function Manager () {
 
         var picDiv = document.getElementById("id_pic0");
         this.picAry.push( new Picture("id_pic0", randomUrls[0] ));
+        this.picDragable.push( new Draggable("id_pic0",this.containerWidth,this.containerHeight ));
 
         for(var i=1; i<imgUrls.length ; i++){
             var clone = picDiv.cloneNode(true); // "deep" clone
             clone.id = "id_pic" + i;
             picDiv.parentNode.appendChild(clone);
             this.picAry.push( new Picture(clone.id, randomUrls[i] ));
+            this.picDragable.push( new Draggable(clone.id,this.containerWidth,this.containerHeight ));
         }
     }
 
@@ -89,6 +92,9 @@ function Manager () {
 
         for(var i=0; i<this.picAry.length ; i++){
             this.picAry[i].changePosition(changeRate);
+        }
+        for(var i=0; i<this.picDragable.length ; i++){
+            this.picDragable[i].resizeSandbox(this.containerWidth, this.containerHeight);
         }
     }
 
@@ -117,20 +123,20 @@ function Manager () {
     }
 }
 
+
+
+
 function Picture (id, imgURL  ){
     this.div_id = id;
     this.imgURL = imgURL;
     this.isHidden = true;
-    this.posX = 0;
-    this.posY = 0;
     var picDiv = document.getElementById(this.div_id);
     var picBlock = picDiv.getElementsByTagName('img')[0];
+    picBlock.id = "img_" + this.div_id;
     picBlock.src = this.imgURL;
 }
 
 Picture.prototype.show = function(posX, posY){
-    this.posX = posX;
-    this.posY = posY;
     var picDiv = document.getElementById(this.div_id);
     picDiv.style.visibility = 'visible';
     picDiv.style.position = 'absolute';
@@ -144,9 +150,9 @@ Picture.prototype.changePosition = function(changeRate){
     if(this.isHidden == true)
         return;
     var picDiv = document.getElementById(this.div_id);
-    this.posX = Math.floor(this.posX*changeRate);
-    this.posY = Math.floor(this.posY*changeRate);
-    picDiv.style.left = this.posX + "px";
-    picDiv.style.top = this.posY + "px";
+    var posX = Math.floor(picDiv.offsetLeft*changeRate);
+    var posY = Math.floor(picDiv.offsetTop*changeRate);
+    picDiv.style.left = posX + "px";
+    picDiv.style.top = posY + "px";
 }
 
