@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Created by i_jhuhuchen on 2016/3/28.
  */
@@ -67,7 +69,7 @@ function Manager () {
             this.picAry.push( new Picture(clone.id, randomUrls[i] ));
             this.picDragable.push( new Draggable(clone.id,this.containerWidth,this.containerHeight ));
         }
-    }
+    };
 
     this.showNextItem = function(){
         if(this.itemShowIdx < this.picAry.length) {
@@ -78,7 +80,7 @@ function Manager () {
         }else{
             return false;
         }
-    }
+    };
 
     this.handleResize = function(){
         if(this.containerId == "" || this.containerWidth==0 || this.containerHeight==0)
@@ -96,7 +98,7 @@ function Manager () {
         for(var i=0; i<this.picDragable.length ; i++){
             this.picDragable[i].resizeSandbox(this.containerWidth, this.containerHeight);
         }
-    }
+    };
 
     this.shuffle = function(array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
@@ -108,13 +110,13 @@ function Manager () {
             array[randomIndex] = temporaryValue;
         }
         return array;
-    }
+    };
 
     this.getRandomX = function() {
         var min = 0;
         var max = this.containerWidth > 0 ? Math.floor(this.containerWidth*0.75) : 0;
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    };
 
     this.getRandomY = function() {
         var min = 0;
@@ -144,7 +146,7 @@ Picture.prototype.show = function(posX, posY){
     picDiv.style.top = posY + "px";
     //picDiv.style.backgroundColor = '#' + Math.random().toString(16).substring(2, 8);
     this.isHidden = false;
-}
+};
 
 Picture.prototype.changePosition = function(changeRate){
     if(this.isHidden == true)
@@ -154,5 +156,5 @@ Picture.prototype.changePosition = function(changeRate){
     var posY = Math.floor(picDiv.offsetTop*changeRate);
     picDiv.style.left = posX + "px";
     picDiv.style.top = posY + "px";
-}
+};
 
