@@ -129,13 +129,19 @@ function Manager () {
 
 
 function Picture (id, imgURL  ){
+    var self = this;
     this.div_id = id;
+    this.img_id = "img_" + this.div_id;
     this.imgURL = imgURL;
     this.isHidden = true;
     var picDiv = document.getElementById(this.div_id);
     var picBlock = picDiv.getElementsByTagName('img')[0];
-    picBlock.id = "img_" + this.div_id;
+    picBlock.id = this.img_id;
     picBlock.src = this.imgURL;
+
+    picBlock.addEventListener("error", self.loadImageError.bind(this), false);
+    picBlock.addEventListener("load", self.loadImageSuccess.bind(this), false);
+
 }
 
 Picture.prototype.show = function(posX, posY){
@@ -157,4 +163,25 @@ Picture.prototype.changePosition = function(changeRate){
     picDiv.style.left = posX + "px";
     picDiv.style.top = posY + "px";
 };
+
+
+Picture.prototype.loadImageError = function(){
+    console.log("Reload image : " + this.img_id);
+    var imgItem = document.getElementById(this.img_id);
+    var imgURL = this.imgURL;
+    imgItem.style.visibility = "hidden";
+    setTimeout(function(){
+        imgItem.src = imgURL;
+    }, 1000);
+};
+
+Picture.prototype.loadImageSuccess = function(){
+    var imgItem = document.getElementById(this.img_id);
+    if(imgItem.style.visibility == 'hidden'){
+        console.log("Show image : " + this.img_id);
+        imgItem.style.visibility = "visible";
+    }
+};
+
+
 
